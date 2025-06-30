@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI写作助手 - 高保真产品设计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --primary-700: #0369a1;
+            --primary-900: #0c4a6e;
+            
+            --purple-50: #faf5ff;
+            --purple-100: #f3e8ff;
+            --purple-500: #a855f7;
+            --purple-600: #9333ea;
+            --purple-700: #7c3aed;
+            
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 24px;
+        }
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .premium-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .phone-showcase {
+            width: 375px;
+            height: 812px;
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 42px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1e293b;
+            border-radius: 0 0 20px 20px;
+            z-index: 50;
+        }
+        
+        .status-bar {
+            height: 44px;
+            padding-top: 8px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+        
+        .app-header {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+            backdrop-filter: blur(20px);
+            color: white;
+            padding: 1.5rem 1.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+            opacity: 0.8;
+        }
+        
+        .status-indicator {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .ai-status-bar {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+        }
+        
+        .bottom-toolbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 1rem 1.5rem;
+        }
+        
+        .toolbar-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .stat-item {
+            font-size: 0.75rem;
+            color: rgba(100, 116, 139, 0.8);
+            font-weight: 500;
+        }
+        
+        .tool-button {
+            width: 40px;
+            height: 40px;
+            background: rgba(15, 23, 42, 0.04);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-600);
+            transition: all 0.2s ease;
+        }
+        
+        .tool-button:hover {
+            background: rgba(15, 23, 42, 0.08);
+            border-color: rgba(15, 23, 42, 0.12);
+            color: var(--neutral-800);
+        }
+        
+        .primary-action {
+            background: linear-gradient(135deg, var(--purple-500), var(--purple-600));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+        }
+        
+        .primary-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(168, 85, 247, 0.3);
+        }
+        
+        .document-meta {
+            background: rgba(15, 23, 42, 0.03);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            color: var(--neutral-600);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .sync-indicator {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--neutral-200);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .ai-button {
+            background: linear-gradient(135deg, var(--purple-500), var(--purple-600));
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-button:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .ai-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .ai-button:hover::before {
+            left: 100%;
+        }
+        
+        .text-editor-area {
+            background: var(--neutral-50);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            margin: 1rem;
+            border: 2px solid var(--neutral-200);
+            min-height: 300px;
+            position: relative;
+            transition: border-color 0.3s ease;
+        }
+        
+        .text-editor-area:focus-within {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .ai-suggestion {
+            background: linear-gradient(135deg, var(--primary-50), var(--purple-50));
+            border: 1px solid var(--primary-200);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin: 0.75rem 0;
+            position: relative;
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .floating-menu {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+        
+        .floating-menu:hover .fab-submenu {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .fab-main {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--purple-500), var(--purple-700));
+            border-radius: 50%;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid white;
+        }
+        
+        .fab-main:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px -12px rgba(168, 85, 247, 0.4);
+        }
+        
+        .selection-toolbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 0.375rem 0.5rem;
+            display: flex;
+            gap: 0.125rem;
+            position: absolute;
+            z-index: 50;
+            animation: toolbarSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes toolbarSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .toolbar-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            border: none;
+            background: rgba(15, 23, 42, 0.04);
+            color: var(--neutral-700);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .toolbar-button:hover {
+            background: rgba(15, 23, 42, 0.08);
+            color: var(--neutral-900);
+            transform: scale(1.05);
+        }
+        
+        .toolbar-button:active {
+            transform: scale(0.95);
+        }
+        
+        .toolbar-button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        
+        .toolbar-button:hover::after {
+            opacity: 1;
+        }
+        
+        .premium-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .design-token {
+            background: var(--neutral-50);
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .ai-thinking {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--purple-600);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .thinking-dots span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--purple-500);
+            display: inline-block;
+            animation: thinking 1.4s infinite ease-in-out;
+        }
+        
+        .thinking-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .thinking-dots span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes thinking {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .workflow-step {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .workflow-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-500), var(--purple-500));
+        }
+        
+        .interaction-preview {
+            background: var(--neutral-900);
+            border-radius: var(--radius-2xl);
+            padding: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .interaction-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(168, 85, 247, 0.1));
+            pointer-events: none;
+        }
+        
+        /* 前沿AI交互样式 */
+        .ai-prediction {
+            color: rgba(168, 85, 247, 0.6);
+            font-style: italic;
+            position: relative;
+            animation: aiPulse 2s infinite;
+        }
+        
+        @keyframes aiPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+        }
+        
+        .smart-format-suggestion {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(14, 165, 233, 0.95));
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.3);
+            animation: formatSuggestionSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 60;
+        }
+        
+        @keyframes formatSuggestionSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .ai-assistant-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            bottom: 0;
+            width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+            border-left: 1px solid rgba(168, 85, 247, 0.2);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .ai-assistant-panel.active {
+            right: 0;
+        }
+        
+        .ai-role-switcher {
+            display: flex;
+            background: rgba(15, 23, 42, 0.04);
+            border-radius: 20px;
+            padding: 0.25rem;
+            gap: 0.25rem;
+        }
+        
+        .ai-role {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--neutral-600);
+        }
+        
+        .ai-role.active {
+            background: linear-gradient(135deg, var(--purple-500), var(--purple-600));
+            color: white;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+        
+        .voice-input-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-input-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .voice-visualizer {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.3), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: voicePulse 1.5s infinite;
+        }
+        
+        @keyframes voicePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .format-toolbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 20px;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            position: sticky;
+            top: 1rem;
+            z-index: 50;
+            margin: 1rem;
+        }
+        
+        .format-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: var(--neutral-600);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .format-button:hover {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--purple-600);
+            transform: scale(1.05);
+        }
+        
+        .format-button.active {
+            background: linear-gradient(135deg, var(--purple-500), var(--purple-600));
+            color: white;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+        
+        .content-analyzer {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1rem 1.25rem;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            min-width: 200px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        
+        .emotion-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .emotion-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--neutral-200);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .emotion-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        
+        .smart-suggestions {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            padding: 0.75rem;
+            min-width: 280px;
+            max-width: 400px;
+            z-index: 100;
+            animation: suggestionsAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes suggestionsAppear {
+            from {
+                opacity: 0;
+                transform: translateY(8px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .suggestion-item {
+            padding: 0.75rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .suggestion-item:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(14, 165, 233, 0.05));
+            border-color: rgba(168, 85, 247, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .ai-cursor {
+            position: absolute;
+            width: 2px;
+            height: 1.2em;
+            background: linear-gradient(180deg, var(--purple-500), var(--purple-600));
+            animation: cursorBlink 1s infinite;
+        }
+        
+        @keyframes cursorBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .immersive-mode {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .immersive-mode.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.6), transparent);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        .neural-network {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.3) 1px, transparent 1px),
+                radial-gradient(circle at 80% 60%, rgba(14, 165, 233, 0.3) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px, 80px 80px, 60px 60px;
+            animation: networkPulse 4s infinite;
+        }
+        
+        @keyframes networkPulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <!-- 页面标题区域 -->
+    <div class="premium-container">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                AI写作助手
+            </h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                高保真移动端产品设计 · 连贯交互体验 · 优雅视觉语言
+            </p>
+        </header>
+
+        <!-- 主要展示区域 -->
+        <div class="premium-grid">
+            <!-- 核心编辑器界面 -->
+            <div class="feature-card">
+                <div class="phone-showcase mx-auto">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <!-- 状态栏 -->
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <div class="flex items-center gap-1">
+                                <i data-lucide="signal" class="w-4 h-4"></i>
+                                <i data-lucide="wifi" class="w-4 h-4"></i>
+                                <i data-lucide="battery" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+
+                        <!-- 应用头部 -->
+                        <div class="app-header relative z-10">
+                            <div class="flex items-center justify-between mb-5">
+                                <div class="flex items-center gap-3">
+                                    <button class="w-10 h-10 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-xl flex items-center justify-center transition-all">
+                                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                                    </button>
+                                    <div>
+                                        <h2 class="text-xl font-semibold mb-1">春日随想</h2>
+                                        <div class="status-indicator">
+                                            <div class="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                            <span>AI协作中</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button class="w-10 h-10 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-xl flex items-center justify-center transition-all">
+                                        <i data-lucide="share" class="w-5 h-5"></i>
+                                    </button>
+                                    <button class="w-10 h-10 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-xl flex items-center justify-center transition-all">
+                                        <i data-lucide="more-vertical" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 简化的AI状态栏 -->
+                            <div class="ai-status-bar">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-6 h-6 bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-white"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">AI助手就绪</span>
+                                    </div>
+                                    <div class="text-xs text-white text-opacity-80 font-medium">
+                                        386字 · 已同步
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 革命性AI富文本编辑器 -->
+                        <div class="flex-1 overflow-hidden relative">
+                            <!-- 神经网络背景 -->
+                            <div class="neural-network"></div>
+                            
+                            <!-- 智能富文本工具栏 -->
+                            <div class="format-toolbar">
+                                <button class="format-button active" title="加粗">
+                                    <i data-lucide="bold" class="w-4 h-4"></i>
+                                </button>
+                                <button class="format-button" title="斜体">
+                                    <i data-lucide="italic" class="w-4 h-4"></i>
+                                </button>
+                                <button class="format-button" title="下划线">
+                                    <i data-lucide="underline" class="w-4 h-4"></i>
+                                </button>
+                                <div class="w-px h-6 bg-slate-200 mx-1"></div>
+                                <button class="format-button" title="AI智能标题">
+                                    <i data-lucide="type" class="w-4 h-4"></i>
+                                </button>
+                                <button class="format-button" title="AI引用生成">
+                                    <i data-lucide="quote" class="w-4 h-4"></i>
+                                </button>
+                                <button class="format-button" title="智能列表">
+                                    <i data-lucide="list" class="w-4 h-4"></i>
+                                </button>
+                                <div class="w-px h-6 bg-slate-200 mx-1"></div>
+                                <button class="format-button" title="AI情感调色板">
+                                    <i data-lucide="palette" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="text-editor-area mx-4 mt-2">
+                                <!-- 革命性实时AI协作指示器 -->
+                                <div class="bg-gradient-to-r from-violet-500/10 via-blue-500/10 to-emerald-500/10 border border-violet-200 rounded-2xl p-4 mb-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div class="relative">
+                                                <div class="w-8 h-8 bg-gradient-to-br from-violet-500 via-blue-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                                                    <i data-lucide="zap" class="w-4 h-4 text-white"></i>
+                                                </div>
+                                                <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></div>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-semibold text-slate-800 text-sm">多AI智能体协作</h4>
+                                                <div class="flex items-center gap-4 text-xs text-slate-600 mt-0.5">
+                                                    <span class="flex items-center gap-1">
+                                                        <div class="w-1.5 h-1.5 bg-violet-500 rounded-full"></div>
+                                                        创意AI
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                                        编辑AI
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                                                        校对AI
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ai-role-switcher">
+                                            <div class="ai-role active">创意</div>
+                                            <div class="ai-role">编辑</div>
+                                            <div class="ai-role">校对</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 智能预测文本区域 -->
+                                <div class="space-y-4">
+                                    <div class="relative group">
+                                        <p class="text-slate-700 leading-relaxed font-normal">
+                                            在这个AI技术飞速发展的时代，
+                                            <span class="bg-gradient-to-r from-blue-50 to-violet-50 px-2 py-0.5 rounded-lg border border-blue-100 cursor-pointer hover:bg-gradient-to-r hover:from-blue-100 hover:to-violet-100 transition-all">写作正在经历一场前所未有的变革</span>。智能写作助手不再是科幻电影中的概念，而是真实存在于我们指尖的强大工具<span class="ai-prediction">，它正在重塑我们表达思想的方式...</span>
+                                        </p>
+                                        
+                                        <!-- AI协作光标 -->
+                                        <div class="ai-cursor" style="left: 280px; top: 24px;"></div>
+                                        
+                                        <!-- 段落级AI魔法按钮 -->
+                                        <button class="absolute -left-12 top-1 w-10 h-10 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500 hover:from-violet-600 hover:via-purple-600 hover:to-blue-600 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-xl hover:scale-110 active:scale-95">
+                                            <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                                        </button>
+                                        
+                                        <!-- 智能格式建议 -->
+                                        <div class="smart-format-suggestion" style="top: -3rem; left: 50px;">
+                                            <i data-lucide="lightbulb" class="w-3 h-3 mr-1"></i>
+                                            建议添加标题格式
+                                        </div>
+                                    </div>
+
+                                    <div class="relative group">
+                                        <p class="text-slate-700 leading-relaxed font-normal">
+                                            从简单的拼写检查到智能内容生成，从文风润色到情感分析，AI正在全方位地改变着我们的写作体验。它不是要替代人类的创造力，
+                                            <span class="ai-prediction">而是要成为我们思维的延伸，让每一个想法都能以最完美的形式表达出来。</span>
+                                        </p>
+                                        
+                                        <button class="absolute -left-12 top-1 w-10 h-10 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500 hover:from-violet-600 hover:via-purple-600 hover:to-blue-600 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-xl hover:scale-110 active:scale-95">
+                                            <i data-lucide="wand-2" class="w-5 h-5 text-white"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- 智能建议卡片 -->
+                                    <div class="smart-suggestions" style="top: 150px; left: 20px;">
+                                        <div class="suggestion-item">
+                                            <div class="flex items-start gap-2">
+                                                <i data-lucide="lightbulb" class="w-4 h-4 text-violet-500 mt-0.5"></i>
+                                                <div>
+                                                    <div class="font-medium text-slate-800 text-sm">续写建议</div>
+                                                    <div class="text-xs text-slate-600 mt-1">"在未来的写作中，AI将..."</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="suggestion-item">
+                                            <div class="flex items-start gap-2">
+                                                <i data-lucide="edit-3" class="w-4 h-4 text-blue-500 mt-0.5"></i>
+                                                <div>
+                                                    <div class="font-medium text-slate-800 text-sm">语调调整</div>
+                                                    <div class="text-xs text-slate-600 mt-1">让语言更加生动有趣</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="suggestion-item">
+                                            <div class="flex items-start gap-2">
+                                                <i data-lucide="target" class="w-4 h-4 text-emerald-500 mt-0.5"></i>
+                                                <div>
+                                                    <div class="font-medium text-slate-800 text-sm">结构优化</div>
+                                                    <div class="text-xs text-slate-600 mt-1">添加过渡句增强连贯性</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 实时情感分析和写作指导 -->
+                                    <div class="bg-gradient-to-r from-slate-50 to-violet-50 border border-violet-100 rounded-2xl p-4 mt-6">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
+                                                <i data-lucide="brain" class="w-6 h-6 text-white"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <h4 class="font-semibold text-slate-800">AI深度语义分析</h4>
+                                                    <span class="text-xs text-violet-600 bg-violet-100 px-2 py-1 rounded-lg font-medium">实时</span>
+                                                </div>
+                                                
+                                                <!-- 情感色彩指示器 -->
+                                                <div class="mb-3">
+                                                    <div class="flex items-center justify-between text-xs text-slate-600 mb-1">
+                                                        <span>情感色彩</span>
+                                                        <span>积极乐观</span>
+                                                    </div>
+                                                    <div class="emotion-bar">
+                                                        <div class="emotion-fill" style="width: 78%;"></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- 写作质量指标 -->
+                                                <div class="grid grid-cols-3 gap-3 text-center">
+                                                    <div>
+                                                        <div class="text-lg font-bold text-emerald-500">9.2</div>
+                                                        <div class="text-xs text-slate-600">可读性</div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-lg font-bold text-blue-500">95%</div>
+                                                        <div class="text-xs text-slate-600">原创度</div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-lg font-bold text-purple-500">A+</div>
+                                                        <div class="text-xs text-slate-600">语言等级</div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- AI建议操作 -->
+                                                <div class="flex gap-2 mt-3">
+                                                    <button class="bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs px-3 py-1.5 rounded-xl font-medium shadow-sm hover:shadow-md transition-all hover:scale-105">
+                                                        <i data-lucide="magic-wand" class="w-3 h-3 mr-1"></i>
+                                                        智能优化
+                                                    </button>
+                                                    <button class="text-xs px-3 py-1.5 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all">
+                                                        <i data-lucide="eye" class="w-3 h-3 mr-1"></i>
+                                                        详细分析
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 革命性选择工具栏 -->
+                            <div class="selection-toolbar" style="top: 300px; left: 50%; transform: translateX(-50%);">
+                                <button class="toolbar-button" data-tooltip="AI润色优化">
+                                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                                </button>
+                                <button class="toolbar-button" data-tooltip="智能扩写">
+                                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                                </button>
+                                <button class="toolbar-button" data-tooltip="精简压缩">
+                                    <i data-lucide="minus-circle" class="w-5 h-5"></i>
+                                </button>
+                                <button class="toolbar-button" data-tooltip="语调调整">
+                                    <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                                </button>
+                                <button class="toolbar-button" data-tooltip="多语言翻译">
+                                    <i data-lucide="languages" class="w-5 h-5"></i>
+                                </button>
+                                <button class="toolbar-button" data-tooltip="AI创意扩展">
+                                    <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- 浮动粒子效果 -->
+                            <div class="absolute inset-0 pointer-events-none">
+                                <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+                                <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+                                <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+                                <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+                                <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 重新设计的底部工具栏 -->
+                        <div class="bottom-toolbar">
+                            <div class="flex items-center justify-between">
+                                <!-- 左侧：文档状态 -->
+                                <div class="toolbar-section">
+                                    <div class="document-meta">
+                                        <span class="sync-indicator"></span>
+                                        <span>386字 · 已保存</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 右侧：工具按钮 -->
+                                <div class="toolbar-section">
+                                    <button class="tool-button">
+                                        <i data-lucide="mic" class="w-5 h-5"></i>
+                                    </button>
+                                    <button class="tool-button">
+                                        <i data-lucide="image" class="w-5 h-5"></i>
+                                    </button>
+                                    <button class="tool-button">
+                                        <i data-lucide="paperclip" class="w-5 h-5"></i>
+                                    </button>
+                                    
+                                    <div class="w-px h-6 bg-slate-200 mx-1"></div>
+                                    
+                                    <button class="primary-action">
+                                        <i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>
+                                        AI助手
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 智能浮动助手 -->
+                        <div class="floating-menu">
+                            <div class="fab-main group">
+                                <div class="relative">
+                                    <i data-lucide="sparkles" class="w-7 h-7 transition-transform group-hover:scale-110"></i>
+                                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+                                </div>
+                            </div>
+                            <!-- 快捷功能菜单 -->
+                            <div class="fab-submenu absolute bottom-16 right-0 opacity-0 transition-all duration-300 space-y-2 transform translate-y-2">
+                                <button class="w-12 h-12 bg-white rounded-2xl shadow-lg flex items-center justify-center text-slate-700 hover:scale-105 transition-all" onclick="toggleVoiceInput()">
+                                    <i data-lucide="mic" class="w-5 h-5"></i>
+                                </button>
+                                <button class="w-12 h-12 bg-white rounded-2xl shadow-lg flex items-center justify-center text-slate-700 hover:scale-105 transition-all" onclick="toggleImmersiveMode()">
+                                    <i data-lucide="focus" class="w-5 h-5"></i>
+                                </button>
+                                <button class="w-12 h-12 bg-white rounded-2xl shadow-lg flex items-center justify-center text-slate-700 hover:scale-105 transition-all" onclick="toggleAIPanel()">
+                                    <i data-lucide="brain" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 实时内容分析器 -->
+                        <div class="content-analyzer">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i data-lucide="activity" class="w-4 h-4 text-violet-500"></i>
+                                <span class="font-medium text-slate-800 text-sm">实时分析</span>
+                            </div>
+                            
+                            <div class="emotion-indicator">
+                                <span class="text-xs text-slate-600">写作情绪</span>
+                                <div class="emotion-bar">
+                                    <div class="emotion-fill" style="width: 82%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="text-center">
+                                    <div class="font-bold text-emerald-500">386</div>
+                                    <div class="text-slate-600">字数</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="font-bold text-blue-500">2:14</div>
+                                    <div class="text-slate-600">阅读时间</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 交互流程说明 -->
+            <div class="space-y-6">
+                <div class="workflow-step">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            1
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-800 mb-2">文本选择触发</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                用户长按或双击选择文本后，AI工具栏自动在选择区域上方弹出，提供润色、扩写、精简等核心功能。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            2
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-800 mb-2">段落级智能操作</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                悬停或轻触段落左侧出现AI按钮，点击可进行段落重写、语调调整、结构优化等操作。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            3
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-800 mb-2">实时AI协作</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                AI持续分析文档内容，主动提供写作建议，显示实时统计信息和质量评分。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            4
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-800 mb-2">多模态输入</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                支持语音输入、图片识别、手势操作等多种交互方式，适应不同使用场景。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设计系统展示 -->
+        <div class="mt-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-8 text-center">设计系统</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 色彩系统 -->
+                <div class="feature-card p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="palette" class="w-5 h-5 mr-2 text-blue-500"></i>
+                        色彩系统
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="design-token">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-blue-500 rounded-lg"></div>
+                                <div>
+                                    <div class="font-medium text-sm">Primary Blue</div>
+                                    <div class="text-xs text-slate-500">#0ea5e9</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="design-token">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-purple-500 rounded-lg"></div>
+                                <div>
+                                    <div class="font-medium text-sm">AI Purple</div>
+                                    <div class="text-xs text-slate-500">#a855f7</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="design-token">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-slate-700 rounded-lg"></div>
+                                <div>
+                                    <div class="font-medium text-sm">Neutral Dark</div>
+                                    <div class="text-xs text-slate-500">#334155</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 排版系统 -->
+                <div class="feature-card p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="type" class="w-5 h-5 mr-2 text-purple-500"></i>
+                        排版系统
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="design-token">
+                            <div class="text-xl font-bold">标题 Bold 20px</div>
+                            <div class="text-xs text-slate-500 mt-1">Inter Bold / Line-height 1.4</div>
+                        </div>
+                        <div class="design-token">
+                            <div class="text-base font-medium">正文 Medium 16px</div>
+                            <div class="text-xs text-slate-500 mt-1">Inter Medium / Line-height 1.6</div>
+                        </div>
+                        <div class="design-token">
+                            <div class="text-sm">小字 Regular 14px</div>
+                            <div class="text-xs text-slate-500 mt-1">Inter Regular / Line-height 1.5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 组件库 -->
+                <div class="feature-card p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="layers" class="w-5 h-5 mr-2 text-green-500"></i>
+                        核心组件
+                    </h3>
+                    <div class="space-y-4">
+                        <button class="bg-gradient-to-r from-violet-500 to-purple-500 text-white px-4 py-2 rounded-xl font-medium shadow-sm hover:shadow-md transition-all w-full">
+                            <i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>
+                            AI智能按钮
+                        </button>
+                        <div class="flex gap-1 p-2 bg-white rounded-2xl shadow-sm border">
+                            <button class="toolbar-button" data-tooltip="润色">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            </button>
+                            <button class="toolbar-button" data-tooltip="扩写">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            </button>
+                            <button class="toolbar-button" data-tooltip="精简">
+                                <i data-lucide="minus-circle" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="bg-gradient-to-r from-violet-50 to-purple-50 p-3 rounded-xl border border-violet-100">
+                            <div class="text-sm font-medium text-slate-800">AI智能建议卡片</div>
+                            <div class="text-xs text-slate-600 mt-1">现代化设计，支持渐变和图标</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 交互原则 -->
+        <div class="interaction-preview mt-16 relative">
+            <div class="relative z-10">
+                <h2 class="text-3xl font-bold mb-8 text-center">交互设计原则</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i data-lucide="zap" class="w-6 h-6 mr-3 text-yellow-400"></i>
+                            即时响应
+                        </h3>
+                        <ul class="space-y-2 text-slate-300">
+                            <li>• 按钮点击即时反馈，hover效果流畅</li>
+                            <li>• AI工具栏出现动画优雅自然</li>
+                            <li>• 所有交互都有微妙的缩放和色彩变化</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i data-lucide="target" class="w-6 h-6 mr-3 text-blue-400"></i>
+                            精准触达
+                        </h3>
+                        <ul class="space-y-2 text-slate-300">
+                            <li>• 基于用户意图智能推荐功能</li>
+                            <li>• 上下文感知的AI建议</li>
+                            <li>• 渐进式功能展示</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i data-lucide="minimize-2" class="w-6 h-6 mr-3 text-green-400"></i>
+                            简约优雅
+                        </h3>
+                        <ul class="space-y-2 text-slate-300">
+                            <li>• 减少界面元素干扰</li>
+                            <li>• 清晰的视觉层级</li>
+                            <li>• 一致的交互模式</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i data-lucide="heart" class="w-6 h-6 mr-3 text-red-400"></i>
+                            情感化体验
+                        </h3>
+                        <ul class="space-y-2 text-slate-300">
+                            <li>• 温暖的色彩和动画</li>
+                            <li>• 人性化的AI反馈</li>
+                            <li>• 成就感和愉悦感</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+        
+        // 高级交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 平滑的悬停效果
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // AI按钮的微交互
+            const aiButtons = document.querySelectorAll('.ai-button');
+            aiButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 创建涟漪效果
+                    const ripple = document.createElement('div');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.4);
+                        width: 20px;
+                        height: 20px;
+                        animation: ripple 0.6s linear;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        pointer-events: none;
+                    `;
+                    
+                    this.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+
+            // 文本选择模拟
+            const selectableText = document.querySelectorAll('p');
+            selectableText.forEach(p => {
+                p.addEventListener('mouseup', function() {
+                    const selection = window.getSelection();
+                    if (selection.toString().length > 0) {
+                        // 显示选择工具栏的逻辑
+                        console.log('文本已选择:', selection.toString());
+                    }
+                });
+            });
+
+            // FAB按钮交互
+            const fabButton = document.querySelector('.fab-main');
+            if (fabButton) {
+                fabButton.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1.05)';
+                    }, 100);
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            }
+
+            // 添加CSS动画关键帧
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    0% {
+                        width: 20px;
+                        height: 20px;
+                        opacity: 1;
+                    }
+                    100% {
+                        width: 100px;
+                        height: 100px;
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // 革命性AI交互功能
+        function toggleVoiceInput() {
+            const overlay = document.querySelector('.voice-input-overlay') || createVoiceOverlay();
+            overlay.classList.toggle('active');
+        }
+
+        function toggleImmersiveMode() {
+            const immersiveMode = document.querySelector('.immersive-mode') || createImmersiveMode();
+            immersiveMode.classList.toggle('active');
+        }
+
+        function toggleAIPanel() {
+            const panel = document.querySelector('.ai-assistant-panel') || createAIPanel();
+            panel.classList.toggle('active');
+        }
+
+        function createVoiceOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'voice-input-overlay';
+            overlay.innerHTML = `
+                <div class="voice-visualizer">
+                    <div class="w-16 h-16 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full flex items-center justify-center">
+                        <i data-lucide="mic" class="w-8 h-8 text-white"></i>
+                    </div>
+                </div>
+                <div class="absolute bottom-20 text-white text-center">
+                    <h3 class="text-xl font-semibold mb-2">AI语音助手</h3>
+                    <p class="text-sm opacity-80">正在聆听您的声音...</p>
+                    <button class="mt-4 px-6 py-2 bg-white bg-opacity-20 rounded-xl" onclick="toggleVoiceInput()">停止录音</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            return overlay;
+        }
+
+        function createImmersiveMode() {
+            const immersive = document.createElement('div');
+            immersive.className = 'immersive-mode';
+            immersive.innerHTML = `
+                <div class="immersive-editor">
+                    <button class="absolute top-8 right-8 w-12 h-12 bg-white bg-opacity-10 rounded-xl flex items-center justify-center text-white" onclick="toggleImmersiveMode()">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                    <textarea class="immersive-text" placeholder="沉浸式写作模式...">在这个AI技术飞速发展的时代，写作正在经历一场前所未有的变革。智能写作助手不再是科幻电影中的概念，而是真实存在于我们指尖的强大工具。</textarea>
+                </div>
+            `;
+            document.body.appendChild(immersive);
+            return immersive;
+        }
+
+        function createAIPanel() {
+            const panel = document.createElement('div');
+            panel.className = 'ai-assistant-panel';
+            panel.innerHTML = `
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-semibold text-slate-800">AI智能助手</h2>
+                        <button onclick="toggleAIPanel()" class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="ai-role-switcher mb-6">
+                        <div class="ai-role active">创意助手</div>
+                        <div class="ai-role">编辑助手</div>
+                        <div class="ai-role">校对助手</div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gradient-to-r from-violet-50 to-purple-50 p-4 rounded-xl border border-violet-100">
+                            <h3 class="font-medium text-slate-800 mb-2">创意建议</h3>
+                            <p class="text-sm text-slate-600 mb-3">基于您的写作风格，建议添加更多感性描述来增强文章的感染力。</p>
+                            <button class="bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs px-3 py-1.5 rounded-lg">应用建议</button>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-100">
+                            <h3 class="font-medium text-slate-800 mb-2">结构优化</h3>
+                            <p class="text-sm text-slate-600 mb-3">建议重新组织段落顺序，让逻辑更加清晰。</p>
+                            <button class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs px-3 py-1.5 rounded-lg">查看详情</button>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-emerald-50 to-green-50 p-4 rounded-xl border border-emerald-100">
+                            <h3 class="font-medium text-slate-800 mb-2">语法检查</h3>
+                            <p class="text-sm text-slate-600 mb-3">发现2处可优化的表达，点击查看具体建议。</p>
+                            <button class="bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xs px-3 py-1.5 rounded-lg">立即修复</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(panel);
+            return panel;
+        }
+
+        // 实时AI预测文本
+        setInterval(() => {
+            const predictions = document.querySelectorAll('.ai-prediction');
+            predictions.forEach(pred => {
+                pred.style.opacity = pred.style.opacity === '0.4' ? '0.8' : '0.4';
+            });
+        }, 2000);
+    </script>
+</body>
+</html> 

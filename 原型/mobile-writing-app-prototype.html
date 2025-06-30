@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动写作APP原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/framer-motion@latest/dist/framer-motion.js"></script>
+    <style>
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 42px;
+            overflow: hidden;
+            position: relative;
+        }
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1e1e1e;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .floating-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+        .text-editor {
+            min-height: 400px;
+            line-height: 1.8;
+            font-family: 'Georgia', serif;
+        }
+        .writing-stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <!-- 标题 -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">移动写作APP原型设计</h1>
+        <p class="text-gray-600">专为移动端优化的文本编辑器写作应用</p>
+    </div>
+
+    <!-- 原型页面网格 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        
+        <!-- 1. 启动页/欢迎页 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="phone-screen">
+                <div class="h-full bg-gradient-to-br from-purple-600 via-blue-600 to-blue-700 text-white flex flex-col justify-center items-center relative">
+                    <div class="absolute top-0 left-0 w-full h-full opacity-10">
+                        <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=800&fit=crop" alt="writing" class="w-full h-full object-cover">
+                    </div>
+                    <div class="z-10 text-center px-8">
+                        <div class="mb-8">
+                            <i data-lucide="pen-tool" class="w-20 h-20 mx-auto mb-4"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold mb-4">随心写作</h1>
+                        <p class="text-lg opacity-90 mb-8">让创意随时随地流淌</p>
+                        <button class="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all">
+                            开始写作
+                        </button>
+                    </div>
+                    <div class="absolute bottom-8 text-center">
+                        <p class="text-sm opacity-75">轻松记录每一个灵感瞬间</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 首页/写作空间列表 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="phone-screen">
+                <div class="h-full bg-gray-50">
+                    <!-- 状态栏 -->
+                    <div class="bg-white px-4 py-4 mt-8">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-2xl font-bold text-gray-800">我的写作</h1>
+                            <div class="flex items-center space-x-4">
+                                <i data-lucide="search" class="w-6 h-6 text-gray-600"></i>
+                                <i data-lucide="settings" class="w-6 h-6 text-gray-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 写作统计卡片 -->
+                    <div class="px-4 py-4">
+                        <div class="writing-stats text-white p-4 rounded-2xl shadow-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm opacity-90">今日写作</p>
+                                    <p class="text-2xl font-bold">1,250字</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm opacity-90">连续天数</p>
+                                    <p class="text-2xl font-bold">15天</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速操作 -->
+                    <div class="px-4 py-2">
+                        <div class="flex space-x-4">
+                            <button class="flex-1 bg-white p-4 rounded-xl shadow-sm flex items-center justify-center space-x-2">
+                                <i data-lucide="plus" class="w-5 h-5 text-blue-600"></i>
+                                <span class="text-gray-700">新建文档</span>
+                            </button>
+                            <button class="flex-1 bg-white p-4 rounded-xl shadow-sm flex items-center justify-center space-x-2">
+                                <i data-lucide="folder" class="w-5 h-5 text-green-600"></i>
+                                <span class="text-gray-700">文件夹</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 文档列表 -->
+                    <div class="px-4 py-4">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">最近文档</h2>
+                        <div class="space-y-3">
+                            <div class="bg-white p-4 rounded-xl shadow-sm">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-gray-800">春日随想</h3>
+                                        <p class="text-sm text-gray-600 mt-1">春天来了，万物复苏，心情也变得...</p>
+                                        <div class="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                                            <span>2小时前</span>
+                                            <span>386字</span>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="more-horizontal" class="w-5 h-5 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-xl shadow-sm">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-gray-800">科技与人文</h3>
+                                        <p class="text-sm text-gray-600 mt-1">在这个快速发展的科技时代...</p>
+                                        <div class="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                                            <span>昨天</span>
+                                            <span>1,203字</span>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="more-horizontal" class="w-5 h-5 text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. AI增强文本编辑器页面（核心功能） -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="phone-screen">
+                <div class="h-full bg-white flex flex-col relative">
+                    <!-- 编辑器顶部工具栏 -->
+                    <div class="bg-white border-b border-gray-200 px-4 py-3 mt-8">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-600"></i>
+                                <span class="text-lg font-semibold text-gray-800">春日随想</span>
+                                <div class="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse"></div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <button class="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                </button>
+                                <i data-lucide="share" class="w-5 h-5 text-gray-600"></i>
+                                <i data-lucide="more-vertical" class="w-5 h-5 text-gray-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI智能工具栏 -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-purple-100">
+                        <div class="flex items-center space-x-3 overflow-x-auto">
+                            <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                                <i data-lucide="wand-2" class="w-4 h-4"></i>
+                                <span class="text-sm font-medium">润色</span>
+                            </button>
+                            <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                                <i data-lucide="expand" class="w-4 h-4"></i>
+                                <span class="text-sm font-medium">扩写</span>
+                            </button>
+                            <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                                <i data-lucide="compress" class="w-4 h-4"></i>
+                                <span class="text-sm font-medium">精简</span>
+                            </button>
+                            <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                                <i data-lucide="palette" class="w-4 h-4"></i>
+                                <span class="text-sm font-medium">风格</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 格式化工具栏 -->
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center space-x-4">
+                            <button class="p-2 rounded bg-white shadow-sm">
+                                <i data-lucide="bold" class="w-4 h-4 text-gray-700"></i>
+                            </button>
+                            <button class="p-2 rounded bg-white shadow-sm">
+                                <i data-lucide="italic" class="w-4 h-4 text-gray-700"></i>
+                            </button>
+                            <button class="p-2 rounded bg-white shadow-sm">
+                                <i data-lucide="underline" class="w-4 h-4 text-gray-700"></i>
+                            </button>
+                            <div class="h-6 w-px bg-gray-300"></div>
+                            <button class="p-2 rounded bg-white shadow-sm">
+                                <i data-lucide="list" class="w-4 h-4 text-gray-700"></i>
+                            </button>
+                            <button class="p-2 rounded bg-white shadow-sm">
+                                <i data-lucide="heading" class="w-4 h-4 text-gray-700"></i>
+                            </button>
+                            <button class="p-2 rounded bg-white shadow-sm">
+                                <i data-lucide="quote" class="w-4 h-4 text-gray-700"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 编辑区域 -->
+                    <div class="flex-1 px-4 py-4 overflow-y-auto relative">
+                        <div class="text-editor">
+                            <h1 class="text-2xl font-bold text-gray-800 mb-4">春日随想</h1>
+                            
+                            <!-- 第一段文本带AI建议 -->
+                            <div class="relative mb-4">
+                                <p class="text-gray-700 leading-relaxed">
+                                    春天来了，万物复苏，心情也变得格外舒畅。走在小径上，看着路边的花儿争相绽放，仿佛在诉说着生命的美好。
+                                </p>
+                                <!-- AI语法建议气泡 -->
+                                <div class="absolute -right-2 top-0 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer">
+                                    <i data-lucide="lightbulb" class="w-3 h-3 text-white"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- AI建议卡片 -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-white"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-blue-800 mb-1">AI建议润色</p>
+                                        <p class="text-sm text-blue-700 mb-2">
+                                            "春暖花开，万物复苏，徜徉在蜿蜒小径上，目睹路旁繁花似锦，它们用无声的语言诉说着生命的蓬勃与美好。"
+                                        </p>
+                                        <div class="flex space-x-2">
+                                            <button class="px-3 py-1 bg-blue-500 text-white text-xs rounded-full">采用</button>
+                                            <button class="px-3 py-1 bg-white text-blue-600 text-xs rounded-full border border-blue-200">忽略</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 第二段文本 -->
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                阳光透过树叶的缝隙洒在脸上，温暖而惬意。这样的时光，总是让人忍不住停下脚步，静静感受大自然的恩赐。
+                            </p>
+
+                            <!-- AI续写提示 -->
+                            <div class="border-2 border-dashed border-purple-200 rounded-lg p-4 mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                        <i data-lucide="edit-3" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-800">AI续写建议</p>
+                                        <p class="text-xs text-gray-600">基于当前内容，AI可以帮你继续创作...</p>
+                                    </div>
+                                    <button class="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs rounded-full">续写</button>
+                                </div>
+                            </div>
+
+                            <!-- 当前输入位置 -->
+                            <p class="text-gray-700 text-opacity-50">
+                                <span class="animate-pulse">|</span>
+                            </p>
+                        </div>
+
+                        <!-- AI写作助手悬浮按钮 -->
+                        <div class="absolute bottom-4 right-4">
+                            <button class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg flex items-center justify-center">
+                                <i data-lucide="bot" class="w-6 h-6 text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AI增强状态栏 -->
+                    <div class="bg-white border-t border-gray-200 px-4 py-3">
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center space-x-4 text-gray-500">
+                                <span>386字</span>
+                                <div class="flex items-center space-x-1">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span>AI已同步</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <!-- 情感分析 -->
+                                <div class="flex items-center space-x-1 text-orange-600">
+                                    <i data-lucide="smile" class="w-4 h-4"></i>
+                                    <span class="text-xs">积极</span>
+                                </div>
+                                <!-- 可读性评分 -->
+                                <div class="flex items-center space-x-1 text-blue-600">
+                                    <i data-lucide="target" class="w-4 h-4"></i>
+                                    <span class="text-xs">8.5分</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI写作助手面板 (隐藏状态，可通过JS控制显示) -->
+                    <div class="absolute inset-0 bg-black bg-opacity-50 z-50 hidden" id="ai-panel-overlay">
+                        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300">
+                            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+                            
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                    <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">AI写作助手</h3>
+                                    <p class="text-sm text-gray-600">让创作更加智能高效</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 mb-6">
+                                <button class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                                    <i data-lucide="wand-2" class="w-6 h-6 text-blue-600 mx-auto mb-2"></i>
+                                    <p class="text-sm font-medium text-blue-800">智能润色</p>
+                                    <p class="text-xs text-blue-600">让文字更优美</p>
+                                </button>
+                                
+                                <button class="p-4 bg-green-50 rounded-xl border border-green-200">
+                                    <i data-lucide="expand" class="w-6 h-6 text-green-600 mx-auto mb-2"></i>
+                                    <p class="text-sm font-medium text-green-800">内容扩写</p>
+                                    <p class="text-xs text-green-600">丰富表达内容</p>
+                                </button>
+                                
+                                <button class="p-4 bg-purple-50 rounded-xl border border-purple-200">
+                                    <i data-lucide="check-circle" class="w-6 h-6 text-purple-600 mx-auto mb-2"></i>
+                                    <p class="text-sm font-medium text-purple-800">语法检查</p>
+                                    <p class="text-xs text-purple-600">发现语法错误</p>
+                                </button>
+                                
+                                <button class="p-4 bg-orange-50 rounded-xl border border-orange-200">
+                                    <i data-lucide="palette" class="w-6 h-6 text-orange-600 mx-auto mb-2"></i>
+                                    <p class="text-sm font-medium text-orange-800">风格调整</p>
+                                    <p class="text-xs text-orange-600">改变写作风格</p>
+                                </button>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <i data-lucide="message-circle" class="w-5 h-5 text-gray-600"></i>
+                                    <span class="font-medium text-gray-800">与AI对话</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <input type="text" placeholder="告诉AI你的想法..." class="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm">
+                                    <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg">
+                                        <i data-lucide="send" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 新建文档选择页面 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="phone-screen">
+                <div class="h-full bg-gray-50">
+                    <!-- 顶部 -->
+                    <div class="bg-white px-4 py-4 mt-8 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="x" class="w-6 h-6 text-gray-600"></i>
+                            <h1 class="text-lg font-semibold text-gray-800">新建文档</h1>
+                            <div class="w-6"></div>
+                        </div>
+                    </div>
+
+                    <!-- 内容 -->
+                    <div class="px-4 py-6">
+                        <div class="space-y-4">
+                            <!-- 快速开始 -->
+                            <div class="bg-white p-4 rounded-xl shadow-sm">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                        <i data-lucide="zap" class="w-6 h-6 text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-gray-800">快速开始</h3>
+                                        <p class="text-sm text-gray-600">立即开始自由写作</p>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                                </div>
+                            </div>
+
+                            <!-- 模板选择 -->
+                            <div class="bg-white p-4 rounded-xl shadow-sm">
+                                <h3 class="font-semibold text-gray-800 mb-3">选择模板</h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="p-3 border border-gray-200 rounded-lg text-center">
+                                        <i data-lucide="book-open" class="w-8 h-8 mx-auto mb-2 text-orange-600"></i>
+                                        <p class="text-sm font-medium text-gray-700">日记</p>
+                                    </div>
+                                    <div class="p-3 border border-gray-200 rounded-lg text-center">
+                                        <i data-lucide="newspaper" class="w-8 h-8 mx-auto mb-2 text-green-600"></i>
+                                        <p class="text-sm font-medium text-gray-700">文章</p>
+                                    </div>
+                                    <div class="p-3 border border-gray-200 rounded-lg text-center">
+                                        <i data-lucide="heart" class="w-8 h-8 mx-auto mb-2 text-red-600"></i>
+                                        <p class="text-sm font-medium text-gray-700">随笔</p>
+                                    </div>
+                                    <div class="p-3 border border-gray-200 rounded-lg text-center">
+                                        <i data-lucide="lightbulb" class="w-8 h-8 mx-auto mb-2 text-yellow-600"></i>
+                                        <p class="text-sm font-medium text-gray-700">灵感</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI写作助手 -->
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-xl text-white">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold">AI写作助手</h3>
+                                        <p class="text-sm opacity-90">让AI帮你开始写作</p>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 文档管理页面 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="phone-screen">
+                <div class="h-full bg-gray-50">
+                    <!-- 顶部 -->
+                    <div class="bg-white px-4 py-4 mt-8">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-2xl font-bold text-gray-800">文档管理</h1>
+                            <div class="flex items-center space-x-4">
+                                <i data-lucide="grid-3x3" class="w-6 h-6 text-gray-600"></i>
+                                <i data-lucide="filter" class="w-6 h-6 text-gray-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 搜索栏 -->
+                    <div class="px-4 py-4">
+                        <div class="bg-white rounded-xl px-4 py-3 flex items-center space-x-3 shadow-sm">
+                            <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
+                            <input type="text" placeholder="搜索文档..." class="flex-1 text-gray-700 placeholder-gray-400 bg-transparent outline-none">
+                        </div>
+                    </div>
+
+                    <!-- 分类标签 -->
+                    <div class="px-4 py-2">
+                        <div class="flex space-x-3">
+                            <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">全部</span>
+                            <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">日记</span>
+                            <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">文章</span>
+                        </div>
+                    </div>
+
+                    <!-- 文档网格 -->
+                    <div class="px-4 py-4 flex-1 overflow-y-auto">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white rounded-xl p-4 shadow-sm">
+                                <div class="h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg mb-3 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-8 h-8 text-blue-600"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-sm">春日随想</h3>
+                                <p class="text-xs text-gray-500 mt-1">2小时前 · 386字</p>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl p-4 shadow-sm">
+                                <div class="h-24 bg-gradient-to-br from-green-100 to-green-200 rounded-lg mb-3 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-8 h-8 text-green-600"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-sm">科技与人文</h3>
+                                <p class="text-xs text-gray-500 mt-1">昨天 · 1,203字</p>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl p-4 shadow-sm">
+                                <div class="h-24 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg mb-3 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-8 h-8 text-purple-600"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-sm">生活感悟</h3>
+                                <p class="text-xs text-gray-500 mt-1">3天前 · 567字</p>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl p-4 shadow-sm">
+                                <div class="h-24 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg mb-3 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-8 h-8 text-orange-600"></i>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-sm">旅行日记</h3>
+                                <p class="text-xs text-gray-500 mt-1">1周前 · 892字</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. 写作统计页面 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="phone-screen">
+                <div class="h-full bg-gray-50">
+                    <!-- 顶部 -->
+                    <div class="bg-white px-4 py-4 mt-8">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-2xl font-bold text-gray-800">写作统计</h1>
+                            <i data-lucide="calendar" class="w-6 h-6 text-gray-600"></i>
+                        </div>
+                    </div>
+
+                    <!-- 主要统计 -->
+                    <div class="px-4 py-4">
+                        <div class="writing-stats text-white p-6 rounded-2xl shadow-lg mb-4">
+                            <div class="text-center mb-4">
+                                <p class="text-4xl font-bold">15</p>
+                                <p class="text-sm opacity-90">连续写作天数</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <p class="text-lg font-bold">1,250</p>
+                                    <p class="text-xs opacity-90">今日字数</p>
+                                </div>
+                                <div>
+                                    <p class="text-lg font-bold">18,690</p>
+                                    <p class="text-xs opacity-90">本周字数</p>
+                                </div>
+                                <div>
+                                    <p class="text-lg font-bold">75,432</p>
+                                    <p class="text-xs opacity-90">总字数</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 写作目标 -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-semibold text-gray-800">今日目标</h3>
+                                <span class="text-sm text-green-600 font-medium">83%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 83%"></div>
+                            </div>
+                            <p class="text-sm text-gray-600">1,250 / 1,500 字</p>
+                        </div>
+
+                        <!-- 最近7天 -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm">
+                            <h3 class="font-semibold text-gray-800 mb-4">最近7天</h3>
+                            <div class="flex items-end justify-between space-x-2 h-20">
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="bg-blue-200 w-full rounded-t" style="height: 60%"></div>
+                                    <span class="text-xs text-gray-500 mt-1">一</span>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="bg-blue-300 w-full rounded-t" style="height: 80%"></div>
+                                    <span class="text-xs text-gray-500 mt-1">二</span>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="bg-blue-400 w-full rounded-t" style="height: 100%"></div>
+                                    <span class="text-xs text-gray-500 mt-1">三</span>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="bg-blue-300 w-full rounded-t" style="height: 70%"></div>
+                                    <span class="text-xs text-gray-500 mt-1">四</span>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="bg-blue-400 w-full rounded-t" style="height: 90%"></div>
+                                    <span class="text-xs text-gray-500 mt-1">五</span>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="bg-blue-200 w-full rounded-t" style="height: 50%"></div>
+                                    <span class="text-xs text-gray-500 mt-1">六</span>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="bg-blue-500 w-full rounded-t" style="height: 85%"></div>
+                                    <span class="text-xs text-gray-500 mt-1">日</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+        
+        // 添加一些简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有按钮添加点击效果
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

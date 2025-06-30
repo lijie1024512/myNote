@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI增强文本编辑器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            margin: 0 auto;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 42px;
+            overflow: hidden;
+            position: relative;
+        }
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1e1e1e;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+        .ai-highlight {
+            background: linear-gradient(120deg, rgba(147, 51, 234, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            border-left: 3px solid #9333ea;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .ai-suggestion-appear {
+            animation: slideInUp 0.3s ease-out;
+        }
+        @keyframes slideInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .ai-typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .ai-typing-dot {
+            width: 4px;
+            height: 4px;
+            background: #9333ea;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .ai-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .ai-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        .floating-ai-panel {
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .floating-ai-panel.show {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen p-8">
+    <!-- 页面标题 -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">AI增强文本编辑器</h1>
+        <p class="text-gray-600">智能写作助手，让创作更加高效</p>
+    </div>
+
+    <!-- 手机原型 -->
+    <div class="phone-frame">
+        <div class="notch"></div>
+        <div class="phone-screen">
+            <div class="h-full bg-white flex flex-col relative">
+                <!-- 顶部工具栏 -->
+                <div class="bg-white border-b border-gray-200 px-4 py-3 mt-8">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="arrow-left" class="w-6 h-6 text-gray-600"></i>
+                            <span class="text-lg font-semibold text-gray-800">AI写作助手</span>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span class="text-xs text-green-600 font-medium">AI在线</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button class="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            </button>
+                            <button class="p-2 rounded-lg bg-blue-50 text-blue-600">
+                                <i data-lucide="brain" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI智能工具栏 -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-3 border-b border-purple-100">
+                    <div class="flex items-center space-x-3 overflow-x-auto">
+                        <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                            <i data-lucide="wand-2" class="w-4 h-4"></i>
+                            <span class="text-sm font-medium">润色</span>
+                            <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full ml-1">AI</span>
+                        </button>
+                        <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                            <i data-lucide="expand" class="w-4 h-4"></i>
+                            <span class="text-sm font-medium">扩写</span>
+                        </button>
+                        <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                            <i data-lucide="compress" class="w-4 h-4"></i>
+                            <span class="text-sm font-medium">精简</span>
+                        </button>
+                        <button class="flex items-center space-x-2 px-3 py-2 bg-white rounded-full shadow-sm border border-purple-200 text-purple-700 whitespace-nowrap">
+                            <i data-lucide="languages" class="w-4 h-4"></i>
+                            <span class="text-sm font-medium">翻译</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 写作模式切换 -->
+                <div class="bg-white px-4 py-2 border-b border-gray-100">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="edit-3" class="w-4 h-4 text-gray-500"></i>
+                        <span class="text-sm text-gray-600">写作模式：</span>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">创意写作</span>
+                            <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">学术论文</span>
+                            <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">商务邮件</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 编辑区域 -->
+                <div class="flex-1 px-4 py-4 overflow-y-auto relative bg-gray-50">
+                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                        <!-- 文档级AI操作栏 -->
+                        <div class="flex items-center justify-between mb-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
+                                <span class="text-sm font-medium text-blue-800">整篇文档</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="doc-ai-btn" class="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs rounded-full flex items-center space-x-1">
+                                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                    <span>AI优化</span>
+                                </button>
+                                <button id="doc-generate-btn" class="px-3 py-1 bg-white text-blue-600 text-xs rounded-full border border-blue-200">续写全文</button>
+                            </div>
+                        </div>
+
+                        <!-- 文档标题 -->
+                        <div class="mb-4">
+                            <input type="text" value="我的AI写作体验" class="text-2xl font-bold text-gray-800 w-full bg-transparent border-none outline-none">
+                        </div>
+
+                        <!-- AI提示词输入区域 (隐藏状态) -->
+                        <div id="prompt-editor" class="hidden mb-4 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                            <div class="flex items-center space-x-2 mb-3">
+                                <i data-lucide="message-square" class="w-4 h-4 text-gray-600"></i>
+                                <span class="text-sm font-medium text-gray-800">AI提示词</span>
+                                <span class="text-xs text-gray-500">(可编辑)</span>
+                            </div>
+                            <textarea id="prompt-text" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm resize-none" rows="3" placeholder="描述你想要AI怎样帮助你..."></textarea>
+                            <div class="flex items-center justify-between mt-3">
+                                <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                    <i data-lucide="info" class="w-3 h-3"></i>
+                                    <span>上下文已自动添加</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">取消</button>
+                                    <button class="px-3 py-1 bg-blue-500 text-white text-xs rounded">执行</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 主要内容 -->
+                        <div class="space-y-4 text-editor" id="main-content">
+                            <!-- 段落1 - 可选择文本 -->
+                            <div class="relative">
+                                <p class="text-gray-700 leading-relaxed selectable-text" data-paragraph="1">
+                                    在这个AI技术飞速发展的时代，写作正在经历一场前所未有的变革。智能写作助手不再是科幻电影中的概念，而是真实存在于我们指尖的强大工具。
+                                </p>
+                                <!-- 段落AI操作按钮 -->
+                                <button class="paragraph-ai-btn absolute -left-8 top-2 w-6 h-6 bg-blue-100 hover:bg-blue-200 rounded-full flex items-center justify-center opacity-0 transition-all duration-200" data-paragraph="1">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-blue-600"></i>
+                                </button>
+                            </div>
+
+                            <!-- 段落2 -->
+                            <div class="relative">
+                                <p class="text-gray-700 leading-relaxed selectable-text" data-paragraph="2">
+                                    从简单的拼写检查到智能内容生成，从文风润色到情感分析，AI正在全方位地改变着我们的写作体验。它不是要替代人类的创造力，而是要放大和增强我们的表达能力。
+                                </p>
+                                <button class="paragraph-ai-btn absolute -left-8 top-2 w-6 h-6 bg-blue-100 hover:bg-blue-200 rounded-full flex items-center justify-center opacity-0 transition-all duration-200" data-paragraph="2">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-blue-600"></i>
+                                </button>
+                            </div>
+
+                            <!-- AI生成的内容示例 -->
+                            <div class="ai-highlight" data-paragraph="3">
+                                <div class="flex items-start space-x-2 mb-2">
+                                    <div class="w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i data-lucide="sparkles" class="w-2 h-2 text-white"></i>
+                                    </div>
+                                    <p class="text-xs font-medium text-purple-800">AI生成内容</p>
+                                </div>
+                                <p class="text-gray-700 leading-relaxed selectable-text">
+                                    比如，在写作学术论文时，AI可以帮助我们快速检索相关文献，生成引用格式；在创意写作中，它能够提供词汇建议，帮助我们找到更加精准的表达方式；在商务写作中，AI能够调整语调，确保内容既专业又友好。
+                                </p>
+                                <div class="flex items-center space-x-2 mt-3">
+                                    <button class="px-3 py-1 bg-purple-500 text-white text-xs rounded-full">采用</button>
+                                    <button class="px-3 py-1 bg-white text-purple-600 text-xs rounded-full border border-purple-200">编辑</button>
+                                    <button class="px-3 py-1 bg-white text-gray-600 text-xs rounded-full border border-gray-200">重新生成</button>
+                                </div>
+                            </div>
+
+                            <!-- 当前输入位置 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="animate-pulse text-gray-400">|</span>
+                                <div class="ai-typing-indicator">
+                                    <span class="text-xs text-purple-600">AI正在分析...</span>
+                                    <div class="ai-typing-dot"></div>
+                                    <div class="ai-typing-dot"></div>
+                                    <div class="ai-typing-dot"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文本选择后的浮动工具栏 -->
+                    <div id="selection-toolbar" class="absolute hidden bg-white rounded-lg shadow-xl border border-gray-200 p-2 z-40">
+                        <div class="flex items-center space-x-1">
+                            <button class="selection-action px-3 py-2 text-blue-600 hover:bg-blue-50 rounded text-sm flex items-center space-x-1" data-action="polish">
+                                <i data-lucide="wand-2" class="w-4 h-4"></i>
+                                <span>润色</span>
+                            </button>
+                            <button class="selection-action px-3 py-2 text-green-600 hover:bg-green-50 rounded text-sm flex items-center space-x-1" data-action="expand">
+                                <i data-lucide="expand" class="w-4 h-4"></i>
+                                <span>扩写</span>
+                            </button>
+                            <button class="selection-action px-3 py-2 text-orange-600 hover:bg-orange-50 rounded text-sm flex items-center space-x-1" data-action="simplify">
+                                <i data-lucide="minimize-2" class="w-4 h-4"></i>
+                                <span>精简</span>
+                            </button>
+                            <div class="w-px h-6 bg-gray-200"></div>
+                            <button class="selection-action px-3 py-2 text-purple-600 hover:bg-purple-50 rounded text-sm flex items-center space-x-1" data-action="custom">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                <span>自定义</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 段落级AI操作面板 -->
+                    <div id="paragraph-ai-panel" class="absolute hidden bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-40 w-80">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-medium text-gray-800 flex items-center">
+                                <i data-lucide="sparkles" class="w-4 h-4 mr-2 text-purple-600"></i>
+                                段落AI助手
+                            </h4>
+                            <button id="close-paragraph-panel" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <button class="paragraph-action p-3 bg-blue-50 hover:bg-blue-100 rounded-lg text-center border border-blue-200" data-action="rewrite">
+                                <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-600 mx-auto mb-1"></i>
+                                <div class="text-xs font-medium text-blue-800">重写</div>
+                            </button>
+                            <button class="paragraph-action p-3 bg-green-50 hover:bg-green-100 rounded-lg text-center border border-green-200" data-action="expand">
+                                <i data-lucide="plus-circle" class="w-5 h-5 text-green-600 mx-auto mb-1"></i>
+                                <div class="text-xs font-medium text-green-800">扩展</div>
+                            </button>
+                            <button class="paragraph-action p-3 bg-orange-50 hover:bg-orange-100 rounded-lg text-center border border-orange-200" data-action="tone">
+                                <i data-lucide="palette" class="w-5 h-5 text-orange-600 mx-auto mb-1"></i>
+                                <div class="text-xs font-medium text-orange-800">调色调</div>
+                            </button>
+                            <button class="paragraph-action p-3 bg-purple-50 hover:bg-purple-100 rounded-lg text-center border border-purple-200" data-action="translate">
+                                <i data-lucide="languages" class="w-5 h-5 text-purple-600 mx-auto mb-1"></i>
+                                <div class="text-xs font-medium text-purple-800">翻译</div>
+                            </button>
+                        </div>
+                        <div class="border-t pt-3">
+                            <div class="flex items-center space-x-2 text-xs text-gray-600 mb-2">
+                                <i data-lucide="message-circle" class="w-3 h-3"></i>
+                                <span>快速提示词</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="quick-prompt px-2 py-1 bg-gray-100 hover:bg-gray-200 text-xs rounded cursor-pointer">更正式</span>
+                                <span class="quick-prompt px-2 py-1 bg-gray-100 hover:bg-gray-200 text-xs rounded cursor-pointer">更生动</span>
+                                <span class="quick-prompt px-2 py-1 bg-gray-100 hover:bg-gray-200 text-xs rounded cursor-pointer">更简洁</span>
+                                <span class="quick-prompt px-2 py-1 bg-gray-100 hover:bg-gray-200 text-xs rounded cursor-pointer">添加例子</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 整篇文档AI操作面板 -->
+                    <div id="document-ai-panel" class="absolute hidden bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-40 w-80">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-medium text-gray-800">整篇文档AI优化</h4>
+                            <button id="close-doc-panel" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-3">
+                            <button class="doc-action w-full p-3 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 flex items-center space-x-3" data-action="overall-polish">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-blue-600"></i>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-blue-800">全文润色</div>
+                                    <div class="text-xs text-blue-600">优化语言表达和文风</div>
+                                </div>
+                            </button>
+                            <button class="doc-action w-full p-3 bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 flex items-center space-x-3" data-action="continue-writing">
+                                <i data-lucide="edit-3" class="w-5 h-5 text-green-600"></i>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-green-800">智能续写</div>
+                                    <div class="text-xs text-green-600">基于上下文继续创作</div>
+                                </div>
+                            </button>
+                            <button class="doc-action w-full p-3 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200 flex items-center space-x-3" data-action="structure-optimize">
+                                <i data-lucide="layout" class="w-5 h-5 text-purple-600"></i>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-purple-800">结构优化</div>
+                                    <div class="text-xs text-purple-600">调整段落顺序和逻辑</div>
+                                </div>
+                            </button>
+                            <button class="doc-action w-full p-3 bg-orange-50 hover:bg-orange-100 rounded-lg border border-orange-200 flex items-center space-x-3" data-action="summary-generate">
+                                <i data-lucide="file-text" class="w-5 h-5 text-orange-600"></i>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-orange-800">生成摘要</div>
+                                    <div class="text-xs text-orange-600">提取核心要点</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 浮动AI助手按钮组 -->
+                    <div class="fixed bottom-20 right-4 flex flex-col space-y-3">
+                        <!-- 语音输入按钮 -->
+                        <button id="voice-btn" class="w-12 h-12 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center transition-all duration-300">
+                            <i data-lucide="mic" class="w-5 h-5 text-white"></i>
+                        </button>
+                        <!-- 快速AI按钮 -->
+                        <button id="quick-ai-btn" class="w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-full shadow-lg flex items-center justify-center transition-all duration-300">
+                            <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                        </button>
+                        <!-- 主AI助手按钮 -->
+                        <button id="ai-assistant-btn" class="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-xl flex items-center justify-center group hover:shadow-2xl transition-all duration-300">
+                            <i data-lucide="bot" class="w-6 h-6 text-white group-hover:scale-110 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <!-- 快速AI操作面板 -->
+                    <div id="quick-ai-panel" class="absolute hidden bottom-32 right-4 bg-white rounded-lg shadow-xl border border-gray-200 p-3 z-40">
+                        <div class="flex flex-col space-y-2 w-32">
+                            <button class="quick-action px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2" data-action="fix-grammar">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                                <span>修正语法</span>
+                            </button>
+                            <button class="quick-action px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2" data-action="improve-clarity">
+                                <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
+                                <span>提升清晰度</span>
+                            </button>
+                            <button class="quick-action px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2" data-action="add-emotions">
+                                <i data-lucide="heart" class="w-4 h-4 text-red-600"></i>
+                                <span>增加情感</span>
+                            </button>
+                            <button class="quick-action px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2" data-action="make-formal">
+                                <i data-lucide="briefcase" class="w-4 h-4 text-purple-600"></i>
+                                <span>正式化</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI增强状态栏 -->
+                <div class="bg-white border-t border-gray-200 px-4 py-3">
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-gray-600">267字</span>
+                            <div class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span class="text-green-600 text-xs">AI实时分析</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <!-- 情感分析 -->
+                            <div class="flex items-center space-x-1 text-blue-600">
+                                <i data-lucide="smile" class="w-4 h-4"></i>
+                                <span class="text-xs">积极乐观</span>
+                            </div>
+                            <!-- 可读性评分 -->
+                            <div class="flex items-center space-x-1 text-purple-600">
+                                <i data-lucide="target" class="w-4 h-4"></i>
+                                <span class="text-xs">9.2分</span>
+                            </div>
+                            <!-- 原创度 -->
+                            <div class="flex items-center space-x-1 text-green-600">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                <span class="text-xs">98%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI助手面板 -->
+                <div id="ai-panel" class="absolute inset-0 bg-black bg-opacity-50 z-50 hidden">
+                    <div class="floating-ai-panel absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6">
+                        <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+                        
+                        <!-- AI助手头部 -->
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">AI写作助手</h3>
+                                <p class="text-sm text-gray-600">智能分析 · 实时建议 · 创意激发</p>
+                            </div>
+                        </div>
+
+                        <!-- 快速功能网格 -->
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <button class="p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors">
+                                <i data-lucide="wand-2" class="w-6 h-6 text-blue-600 mx-auto mb-2"></i>
+                                <p class="text-sm font-medium text-blue-800">智能润色</p>
+                                <p class="text-xs text-blue-600">优化表达，提升文采</p>
+                            </button>
+                            
+                            <button class="p-4 bg-green-50 rounded-xl border border-green-200 hover:bg-green-100 transition-colors">
+                                <i data-lucide="expand" class="w-6 h-6 text-green-600 mx-auto mb-2"></i>
+                                <p class="text-sm font-medium text-green-800">内容扩写</p>
+                                <p class="text-xs text-green-600">丰富内容，增强表达</p>
+                            </button>
+                            
+                            <button class="p-4 bg-purple-50 rounded-xl border border-purple-200 hover:bg-purple-100 transition-colors">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-purple-600 mx-auto mb-2"></i>
+                                <p class="text-sm font-medium text-purple-800">语法检查</p>
+                                <p class="text-xs text-purple-600">纠正错误，规范表达</p>
+                            </button>
+                            
+                            <button class="p-4 bg-orange-50 rounded-xl border border-orange-200 hover:bg-orange-100 transition-colors">
+                                <i data-lucide="palette" class="w-6 h-6 text-orange-600 mx-auto mb-2"></i>
+                                <p class="text-sm font-medium text-orange-800">风格转换</p>
+                                <p class="text-xs text-orange-600">调整语调，适配场景</p>
+                            </button>
+                        </div>
+
+                        <!-- AI对话区域 -->
+                        <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <i data-lucide="message-circle" class="w-5 h-5 text-gray-600"></i>
+                                <span class="font-medium text-gray-800">与AI对话</span>
+                            </div>
+                            
+                            <!-- 对话示例 -->
+                            <div class="space-y-3 mb-3 max-h-32 overflow-y-auto">
+                                <div class="flex space-x-2">
+                                    <div class="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="user" class="w-3 h-3 text-white"></i>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-lg flex-1">
+                                        <p class="text-sm text-gray-700">帮我让这段文字更有感染力</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-white"></i>
+                                    </div>
+                                    <div class="bg-purple-50 p-2 rounded-lg flex-1 border border-purple-200">
+                                        <p class="text-sm text-purple-800">我建议从情感共鸣的角度入手，添加一些具体的感官描述...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <input type="text" placeholder="描述你的需求..." class="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm focus:border-purple-300 focus:outline-none">
+                                <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:shadow-lg transition-all">
+                                    <i data-lucide="send" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 智能分析摘要 -->
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4">
+                            <h4 class="font-medium text-gray-800 mb-3 flex items-center">
+                                <i data-lucide="bar-chart-3" class="w-4 h-4 mr-2 text-blue-600"></i>
+                                内容分析报告
+                            </h4>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-lg font-bold text-blue-600">9.2</div>
+                                    <div class="text-xs text-gray-600">可读性</div>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold text-green-600">积极</div>
+                                    <div class="text-xs text-gray-600">情感倾向</div>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold text-purple-600">98%</div>
+                                    <div class="text-xs text-gray-600">原创度</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+        
+        // 全局变量
+        let currentSelection = null;
+        let selectedText = '';
+        let currentParagraph = null;
+        
+        // AI助手面板交互
+        const aiBtn = document.getElementById('ai-assistant-btn');
+        const aiPanel = document.getElementById('ai-panel');
+        const floatingPanel = aiPanel?.querySelector('.floating-ai-panel');
+        
+        if (aiBtn && aiPanel && floatingPanel) {
+            aiBtn.addEventListener('click', () => {
+                aiPanel.classList.toggle('hidden');
+                setTimeout(() => {
+                    floatingPanel.classList.toggle('show');
+                }, 10);
+            });
+            
+            aiPanel.addEventListener('click', (e) => {
+                if (e.target === aiPanel) {
+                    floatingPanel.classList.remove('show');
+                    setTimeout(() => {
+                        aiPanel.classList.add('hidden');
+                    }, 300);
+                }
+            });
+        }
+
+        // 文本选择功能
+        const selectionToolbar = document.getElementById('selection-toolbar');
+        let selectionTimer = null;
+
+        // 监听文本选择
+        document.addEventListener('mouseup', handleTextSelection);
+        document.addEventListener('touchend', handleTextSelection);
+
+        function handleTextSelection(e) {
+            clearTimeout(selectionTimer);
+            selectionTimer = setTimeout(() => {
+                const selection = window.getSelection();
+                const selectedText = selection.toString().trim();
+                
+                if (selectedText.length > 0 && selectionToolbar) {
+                    currentSelection = selection;
+                    showSelectionToolbar(e);
+                } else {
+                    hideSelectionToolbar();
+                }
+            }, 100);
+        }
+
+        function showSelectionToolbar(e) {
+            if (!selectionToolbar) return;
+            
+            const rect = currentSelection.getRangeAt(0).getBoundingClientRect();
+            const toolbarRect = selectionToolbar.getBoundingClientRect();
+            
+            let top = rect.top - toolbarRect.height - 10;
+            let left = rect.left + (rect.width / 2) - (toolbarRect.width / 2);
+            
+            // 边界检查
+            if (top < 10) top = rect.bottom + 10;
+            if (left < 10) left = 10;
+            if (left + toolbarRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - toolbarRect.width - 10;
+            }
+            
+            selectionToolbar.style.top = top + window.scrollY + 'px';
+            selectionToolbar.style.left = left + 'px';
+            selectionToolbar.classList.remove('hidden');
+        }
+
+        function hideSelectionToolbar() {
+            if (selectionToolbar) {
+                selectionToolbar.classList.add('hidden');
+            }
+            currentSelection = null;
+        }
+
+        // 选择工具栏按钮事件
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.selection-action')) {
+                const action = e.target.closest('.selection-action').dataset.action;
+                const selectedText = currentSelection ? currentSelection.toString() : '';
+                handleSelectionAction(action, selectedText);
+                hideSelectionToolbar();
+            }
+        });
+
+        function handleSelectionAction(action, text) {
+            console.log(`AI操作: ${action}`, text);
+            
+            switch(action) {
+                case 'polish':
+                    showAIProcessing('正在润色选中文本...');
+                    break;
+                case 'expand':
+                    showAIProcessing('正在扩写选中内容...');
+                    break;
+                case 'simplify':
+                    showAIProcessing('正在精简选中文本...');
+                    break;
+                case 'custom':
+                    showPromptEditor(text);
+                    break;
+            }
+        }
+
+        // 段落AI操作
+        const paragraphAIPanel = document.getElementById('paragraph-ai-panel');
+        
+        // 段落悬停效果
+        document.addEventListener('mouseenter', (e) => {
+            if (e.target.matches('.selectable-text')) {
+                const btn = e.target.parentElement.querySelector('.paragraph-ai-btn');
+                if (btn) btn.style.opacity = '1';
+            }
+        }, true);
+
+        document.addEventListener('mouseleave', (e) => {
+            if (e.target.matches('.selectable-text')) {
+                const btn = e.target.parentElement.querySelector('.paragraph-ai-btn');
+                if (btn) btn.style.opacity = '0';
+            }
+        }, true);
+
+        // 段落AI按钮点击
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.paragraph-ai-btn')) {
+                const paragraphId = e.target.closest('.paragraph-ai-btn').dataset.paragraph;
+                currentParagraph = paragraphId;
+                showParagraphAIPanel(e.target);
+            }
+        });
+
+        function showParagraphAIPanel(btn) {
+            if (!paragraphAIPanel) return;
+            
+            const rect = btn.getBoundingClientRect();
+            paragraphAIPanel.style.top = (rect.bottom + 10) + 'px';
+            paragraphAIPanel.style.left = Math.max(10, rect.left - 100) + 'px';
+            paragraphAIPanel.classList.remove('hidden');
+        }
+
+        // 关闭段落面板
+        document.getElementById('close-paragraph-panel')?.addEventListener('click', () => {
+            paragraphAIPanel?.classList.add('hidden');
+        });
+
+        // 段落操作按钮
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.paragraph-action')) {
+                const action = e.target.closest('.paragraph-action').dataset.action;
+                handleParagraphAction(action);
+                paragraphAIPanel?.classList.add('hidden');
+            }
+        });
+
+        function handleParagraphAction(action) {
+            console.log(`段落AI操作: ${action}`, currentParagraph);
+            
+            const actionNames = {
+                'rewrite': '重写段落',
+                'expand': '扩展段落',
+                'tone': '调整语调',
+                'translate': '翻译段落'
+            };
+            
+            showAIProcessing(`正在${actionNames[action]}...`);
+        }
+
+        // 快速提示词
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.quick-prompt')) {
+                const prompt = e.target.textContent;
+                showAIProcessing(`正在应用"${prompt}"...`);
+                paragraphAIPanel?.classList.add('hidden');
+            }
+        });
+
+        // 整篇文档AI操作
+        const documentAIPanel = document.getElementById('document-ai-panel');
+        
+        document.getElementById('doc-ai-btn')?.addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            if (documentAIPanel) {
+                documentAIPanel.style.top = (rect.bottom + 10) + 'px';
+                documentAIPanel.style.left = Math.max(10, rect.left - 100) + 'px';
+                documentAIPanel.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('close-doc-panel')?.addEventListener('click', () => {
+            documentAIPanel?.classList.add('hidden');
+        });
+
+        // 文档操作按钮
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.doc-action')) {
+                const action = e.target.closest('.doc-action').dataset.action;
+                handleDocumentAction(action);
+                documentAIPanel?.classList.add('hidden');
+            }
+        });
+
+        function handleDocumentAction(action) {
+            console.log(`文档AI操作: ${action}`);
+            
+            const actionNames = {
+                'overall-polish': '全文润色',
+                'continue-writing': '智能续写',
+                'structure-optimize': '结构优化',
+                'summary-generate': '生成摘要'
+            };
+            
+            showAIProcessing(`正在${actionNames[action]}...`);
+        }
+
+        // 快速AI操作面板
+        const quickAIBtn = document.getElementById('quick-ai-btn');
+        const quickAIPanel = document.getElementById('quick-ai-panel');
+        
+        quickAIBtn?.addEventListener('click', () => {
+            quickAIPanel?.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.quick-action')) {
+                const action = e.target.closest('.quick-action').dataset.action;
+                handleQuickAction(action);
+                quickAIPanel?.classList.add('hidden');
+            }
+        });
+
+        function handleQuickAction(action) {
+            const actionNames = {
+                'fix-grammar': '修正语法',
+                'improve-clarity': '提升清晰度',
+                'add-emotions': '增加情感',
+                'make-formal': '正式化'
+            };
+            
+            showAIProcessing(`正在${actionNames[action]}...`);
+        }
+
+        // 提示词编辑器
+        const promptEditor = document.getElementById('prompt-editor');
+        
+        function showPromptEditor(selectedText = '') {
+            if (!promptEditor) return;
+            
+            const promptText = document.getElementById('prompt-text');
+            if (selectedText) {
+                promptText.value = `请帮我优化这段文字："${selectedText}"`;
+            }
+            promptEditor.classList.remove('hidden');
+            promptText.focus();
+        }
+
+        // 语音输入
+        document.getElementById('voice-btn')?.addEventListener('click', () => {
+            showAIProcessing('正在启动语音输入...');
+            // 这里可以集成语音识别API
+        });
+
+        // AI处理状态显示
+        function showAIProcessing(message) {
+            // 创建处理状态提示
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            statusDiv.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <div class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    <span class="text-sm">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(statusDiv);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                statusDiv.remove();
+            }, 3000);
+        }
+
+        // 点击其他地方隐藏面板
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#selection-toolbar') && !e.target.closest('.selectable-text')) {
+                hideSelectionToolbar();
+            }
+            
+            if (!e.target.closest('#paragraph-ai-panel') && !e.target.closest('.paragraph-ai-btn')) {
+                paragraphAIPanel?.classList.add('hidden');
+            }
+            
+            if (!e.target.closest('#document-ai-panel') && !e.target.closest('#doc-ai-btn')) {
+                documentAIPanel?.classList.add('hidden');
+            }
+            
+            if (!e.target.closest('#quick-ai-panel') && !e.target.closest('#quick-ai-btn')) {
+                quickAIPanel?.classList.add('hidden');
+            }
+        });
+
+        // 按钮点击效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + K 打开快速AI面板
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                quickAIPanel?.classList.toggle('hidden');
+            }
+            
+            // ESC 关闭所有面板
+            if (e.key === 'Escape') {
+                hideSelectionToolbar();
+                paragraphAIPanel?.classList.add('hidden');
+                documentAIPanel?.classList.add('hidden');
+                quickAIPanel?.classList.add('hidden');
+                promptEditor?.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html> 

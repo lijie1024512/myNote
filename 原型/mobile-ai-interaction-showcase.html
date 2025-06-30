@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端AI交互设计展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            margin: 0 auto;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 42px;
+            overflow: hidden;
+            position: relative;
+        }
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1e1e1e;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+        .interaction-demo {
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 16px;
+        }
+        .gesture-indicator {
+            position: absolute;
+            background: rgba(102, 126, 234, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+            z-index: 100;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .selection-highlight {
+            background: linear-gradient(120deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            border-radius: 4px;
+            position: relative;
+        }
+        .floating-hint {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4f46e5;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-50 min-h-screen p-8">
+    
+    <!-- 页面标题 -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">移动端AI交互设计展示</h1>
+        <p class="text-gray-600">智能化的移动写作体验设计</p>
+    </div>
+
+    <!-- 交互场景展示网格 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        
+        <!-- 场景1: 文本选择AI操作 -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i data-lucide="mouse-pointer-click" class="w-5 h-5 mr-2 text-blue-600"></i>
+                文本选择AI操作
+            </h3>
+            <div class="phone-frame scale-75 origin-top">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <div class="h-full bg-white flex flex-col relative">
+                        <!-- 示意图：选中文本状态 -->
+                        <div class="flex-1 p-4 relative">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-700 leading-relaxed mb-4">
+                                    在这个AI技术飞速发展的时代，<span class="selection-highlight">写作正在经历一场前所未有的变革</span>。智能写作助手已经成为现实。
+                                </p>
+                                
+                                <!-- 浮动AI工具栏演示 -->
+                                <div class="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-200 p-2 z-40">
+                                    <div class="flex items-center space-x-1">
+                                        <button class="px-3 py-2 text-blue-600 hover:bg-blue-50 rounded text-sm flex items-center space-x-1">
+                                            <i data-lucide="wand-2" class="w-4 h-4"></i>
+                                            <span>润色</span>
+                                        </button>
+                                        <button class="px-3 py-2 text-green-600 hover:bg-green-50 rounded text-sm flex items-center space-x-1">
+                                            <i data-lucide="expand" class="w-4 h-4"></i>
+                                            <span>扩写</span>
+                                        </button>
+                                        <button class="px-3 py-2 text-orange-600 hover:bg-orange-50 rounded text-sm flex items-center space-x-1">
+                                            <i data-lucide="minimize-2" class="w-4 h-4"></i>
+                                            <span>精简</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="floating-hint">选中文本后自动弹出AI工具</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 手势提示 -->
+                        <div class="gesture-indicator" style="top: 200px; right: 20px;">
+                            👆 长按选择文本
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p><strong>交互方式：</strong>长按文本选择 → AI工具栏自动弹出</p>
+                <p><strong>功能：</strong>润色、扩写、精简、自定义提示词</p>
+            </div>
+        </div>
+
+        <!-- 场景2: 段落级AI操作 -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i data-lucide="paragraph" class="w-5 h-5 mr-2 text-purple-600"></i>
+                段落级AI操作
+            </h3>
+            <div class="phone-frame scale-75 origin-top">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <div class="h-full bg-white flex flex-col relative">
+                        <div class="flex-1 p-4 relative">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <!-- 段落悬停状态 -->
+                                <div class="relative p-3 rounded-lg hover:bg-blue-50 transition-colors">
+                                    <p class="text-gray-700 leading-relaxed">
+                                        AI技术正在改变我们的写作方式，从简单的语法检查到智能内容生成，每一个功能都让写作变得更加高效。
+                                    </p>
+                                    <!-- 段落AI按钮 -->
+                                    <button class="absolute -left-8 top-2 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-purple-600"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- 段落AI操作面板 -->
+                                <div class="mt-4 bg-white rounded-lg shadow-xl border border-gray-200 p-4">
+                                    <h4 class="font-medium text-gray-800 mb-3 flex items-center">
+                                        <i data-lucide="sparkles" class="w-4 h-4 mr-2 text-purple-600"></i>
+                                        段落AI助手
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-2 mb-4">
+                                        <button class="p-3 bg-blue-50 rounded-lg text-center border border-blue-200">
+                                            <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600 mx-auto mb-1"></i>
+                                            <div class="text-xs font-medium text-blue-800">重写</div>
+                                        </button>
+                                        <button class="p-3 bg-green-50 rounded-lg text-center border border-green-200">
+                                            <i data-lucide="plus-circle" class="w-4 h-4 text-green-600 mx-auto mb-1"></i>
+                                            <div class="text-xs font-medium text-green-800">扩展</div>
+                                        </button>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">更正式</span>
+                                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">更生动</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="gesture-indicator" style="top: 180px; left: 20px;">
+                            ✨ 悬停显示AI按钮
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p><strong>交互方式：</strong>悬停段落 → AI按钮显示 → 点击打开功能面板</p>
+                <p><strong>功能：</strong>段落重写、扩展、语调调整、快速提示词</p>
+            </div>
+        </div>
+
+        <!-- 场景3: 语音输入AI协作 -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i data-lucide="mic" class="w-5 h-5 mr-2 text-green-600"></i>
+                语音输入AI协作
+            </h3>
+            <div class="phone-frame scale-75 origin-top">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <div class="h-full bg-white flex flex-col relative">
+                        <div class="flex-1 p-4 relative">
+                            <!-- 语音输入状态 -->
+                            <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center animate-pulse">
+                                        <i data-lucide="mic" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-green-800">正在听取...</p>
+                                        <p class="text-xs text-green-600">说出你的想法</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded p-3">
+                                    <p class="text-gray-700 text-sm">
+                                        "今天的天气很好，我想写一篇关于春天的文章，主要描述花开的场景..."
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- AI智能转换 -->
+                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-white"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-blue-800 mb-2">AI智能转换</p>
+                                        <p class="text-sm text-blue-700 bg-white rounded p-2">
+                                            春日暖阳下，万物复苏，花朵竞相绽放。粉嫩的樱花、金黄的迎春花，还有那些不知名的野花，都在这个美好的季节里展现着生命的活力...
+                                        </p>
+                                        <div class="flex space-x-2 mt-2">
+                                            <button class="px-3 py-1 bg-blue-500 text-white text-xs rounded-full">采用</button>
+                                            <button class="px-3 py-1 bg-white text-blue-600 text-xs rounded-full border border-blue-200">重新生成</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 浮动语音按钮 -->
+                        <div class="absolute bottom-20 right-4">
+                            <button class="w-12 h-12 bg-green-500 rounded-full shadow-lg flex items-center justify-center">
+                                <i data-lucide="mic" class="w-5 h-5 text-white"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="gesture-indicator" style="bottom: 100px; right: 70px;">
+                            🎤 一键语音转文字
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p><strong>交互方式：</strong>点击语音按钮 → 语音识别 → AI智能转换</p>
+                <p><strong>功能：</strong>语音转文字、智能润色、结构化输出</p>
+            </div>
+        </div>
+
+        <!-- 场景4: 整篇文档AI优化 -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i data-lucide="file-text" class="w-5 h-5 mr-2 text-indigo-600"></i>
+                整篇文档AI优化
+            </h3>
+            <div class="phone-frame scale-75 origin-top">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <div class="h-full bg-white flex flex-col relative">
+                        <div class="flex-1 p-4">
+                            <!-- 文档级操作栏 -->
+                            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 mb-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
+                                        <span class="text-sm font-medium text-blue-800">整篇文档</span>
+                                    </div>
+                                    <button class="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs rounded-full">
+                                        AI优化
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 文档AI操作面板 -->
+                            <div class="bg-white rounded-lg shadow-xl border border-gray-200 p-4">
+                                <h4 class="font-medium text-gray-800 mb-4">整篇文档AI优化</h4>
+                                <div class="space-y-3">
+                                    <button class="w-full p-3 bg-blue-50 rounded-lg border border-blue-200 flex items-center space-x-3">
+                                        <i data-lucide="sparkles" class="w-5 h-5 text-blue-600"></i>
+                                        <div class="text-left">
+                                            <div class="text-sm font-medium text-blue-800">全文润色</div>
+                                            <div class="text-xs text-blue-600">优化语言表达和文风</div>
+                                        </div>
+                                    </button>
+                                    <button class="w-full p-3 bg-green-50 rounded-lg border border-green-200 flex items-center space-x-3">
+                                        <i data-lucide="edit-3" class="w-5 h-5 text-green-600"></i>
+                                        <div class="text-left">
+                                            <div class="text-sm font-medium text-green-800">智能续写</div>
+                                            <div class="text-xs text-green-600">基于上下文继续创作</div>
+                                        </div>
+                                    </button>
+                                    <button class="w-full p-3 bg-purple-50 rounded-lg border border-purple-200 flex items-center space-x-3">
+                                        <i data-lucide="layout" class="w-5 h-5 text-purple-600"></i>
+                                        <div class="text-left">
+                                            <div class="text-sm font-medium text-purple-800">结构优化</div>
+                                            <div class="text-xs text-purple-600">调整段落顺序和逻辑</div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="gesture-indicator" style="top: 120px; left: 20px;">
+                            📄 一键文档级AI处理
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p><strong>交互方式：</strong>点击文档AI优化 → 选择操作类型 → 批量处理</p>
+                <p><strong>功能：</strong>全文润色、智能续写、结构优化、生成摘要</p>
+            </div>
+        </div>
+
+        <!-- 场景5: 智能提示词编辑 -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i data-lucide="message-square" class="w-5 h-5 mr-2 text-orange-600"></i>
+                智能提示词编辑
+            </h3>
+            <div class="phone-frame scale-75 origin-top">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <div class="h-full bg-white flex flex-col relative">
+                        <div class="flex-1 p-4">
+                            <!-- 提示词编辑区域 -->
+                            <div class="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-4 mb-4">
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <i data-lucide="message-square" class="w-4 h-4 text-gray-600"></i>
+                                    <span class="text-sm font-medium text-gray-800">AI提示词</span>
+                                    <span class="text-xs text-gray-500">(可编辑)</span>
+                                </div>
+                                <textarea class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm resize-none" rows="3">请帮我将这段文字改写得更加优雅，增加一些文学色彩，同时保持原意不变。</textarea>
+                                <div class="flex items-center justify-between mt-3">
+                                    <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                        <i data-lucide="info" class="w-3 h-3"></i>
+                                        <span>上下文已自动添加</span>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">取消</button>
+                                        <button class="px-3 py-1 bg-blue-500 text-white text-xs rounded">执行</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 智能提示词建议 -->
+                            <div class="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                                <h4 class="text-sm font-medium text-orange-800 mb-3">智能建议</h4>
+                                <div class="space-y-2">
+                                    <button class="w-full text-left p-2 bg-white rounded border hover:bg-orange-50 transition-colors">
+                                        <div class="text-sm text-gray-800">✨ 增加情感色彩</div>
+                                        <div class="text-xs text-gray-600">让文字更有感染力</div>
+                                    </button>
+                                    <button class="w-full text-left p-2 bg-white rounded border hover:bg-orange-50 transition-colors">
+                                        <div class="text-sm text-gray-800">📝 调整语言风格</div>
+                                        <div class="text-xs text-gray-600">正式、轻松、学术等</div>
+                                    </button>
+                                    <button class="w-full text-left p-2 bg-white rounded border hover:bg-orange-50 transition-colors">
+                                        <div class="text-sm text-gray-800">🎯 增强逻辑性</div>
+                                        <div class="text-xs text-gray-600">优化段落结构</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="gesture-indicator" style="top: 150px; right: 20px;">
+                            💡 智能提示词生成
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p><strong>交互方式：</strong>选择自定义 → 智能提示词编辑器 → AI建议</p>
+                <p><strong>功能：</strong>可编辑提示词、智能建议、上下文自动添加</p>
+            </div>
+        </div>
+
+        <!-- 场景6: 快速AI操作 -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i data-lucide="zap" class="w-5 h-5 mr-2 text-yellow-600"></i>
+                快速AI操作
+            </h3>
+            <div class="phone-frame scale-75 origin-top">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <div class="h-full bg-white flex flex-col relative">
+                        <div class="flex-1 p-4">
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <p class="text-gray-700 leading-relaxed">
+                                    这是一段需要快速优化的文字内容，用户希望能够一键完成常见的AI操作。
+                                </p>
+                            </div>
+                            
+                            <!-- 浮动按钮组 -->
+                            <div class="absolute bottom-20 right-4 flex flex-col space-y-3">
+                                <button class="w-12 h-12 bg-green-500 rounded-full shadow-lg flex items-center justify-center">
+                                    <i data-lucide="mic" class="w-5 h-5 text-white"></i>
+                                </button>
+                                <button class="w-12 h-12 bg-blue-500 rounded-full shadow-lg flex items-center justify-center">
+                                    <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                                </button>
+                                <button class="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-xl flex items-center justify-center">
+                                    <i data-lucide="bot" class="w-6 h-6 text-white"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- 快速操作面板 -->
+                            <div class="absolute bottom-32 right-4 bg-white rounded-lg shadow-xl border border-gray-200 p-3">
+                                <div class="flex flex-col space-y-2 w-32">
+                                    <button class="px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2">
+                                        <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                                        <span>修正语法</span>
+                                    </button>
+                                    <button class="px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2">
+                                        <i data-lucide="eye" class="w-4 h-4 text-blue-600"></i>
+                                        <span>提升清晰度</span>
+                                    </button>
+                                    <button class="px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2">
+                                        <i data-lucide="heart" class="w-4 h-4 text-red-600"></i>
+                                        <span>增加情感</span>
+                                    </button>
+                                    <button class="px-3 py-2 text-left text-sm hover:bg-gray-50 rounded flex items-center space-x-2">
+                                        <i data-lucide="briefcase" class="w-4 h-4 text-purple-600"></i>
+                                        <span>正式化</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="gesture-indicator" style="bottom: 160px; right: 80px;">
+                            ⚡ 一键快速优化
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p><strong>交互方式：</strong>点击快速AI按钮 → 选择操作类型 → 即时执行</p>
+                <p><strong>功能：</strong>语法修正、清晰度提升、情感增强、正式化</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设计理念说明 -->
+    <div class="interaction-demo max-w-7xl mx-auto mt-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="lightbulb" class="w-6 h-6 mr-3"></i>
+            移动端AI交互设计理念
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2 flex items-center">
+                    <i data-lucide="touch" class="w-5 h-5 mr-2"></i>
+                    触摸优先
+                </h3>
+                <p class="text-sm opacity-90">
+                    所有AI功能都针对移动端触摸操作优化，确保单手操作的便利性和准确性。
+                </p>
+            </div>
+            
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2 flex items-center">
+                    <i data-lucide="layers" class="w-5 h-5 mr-2"></i>
+                    上下文感知
+                </h3>
+                <p class="text-sm opacity-90">
+                    AI自动识别当前选择内容和编辑环境，提供最相关的功能建议。
+                </p>
+            </div>
+            
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2 flex items-center">
+                    <i data-lucide="zap" class="w-5 h-5 mr-2"></i>
+                    即时反馈
+                </h3>
+                <p class="text-sm opacity-90">
+                    每个AI操作都有清晰的视觉反馈和处理状态提示，用户始终了解当前状态。
+                </p>
+            </div>
+            
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2 flex items-center">
+                    <i data-lucide="settings" class="w-5 h-5 mr-2"></i>
+                    多层级操作
+                </h3>
+                <p class="text-sm opacity-90">
+                    从快速一键操作到深度自定义，满足不同用户的需求层次。
+                </p>
+            </div>
+            
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2 flex items-center">
+                    <i data-lucide="mic" class="w-5 h-5 mr-2"></i>
+                    多模态输入
+                </h3>
+                <p class="text-sm opacity-90">
+                    支持文字、语音、手势等多种输入方式，适应不同使用场景。
+                </p>
+            </div>
+            
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2 flex items-center">
+                    <i data-lucide="brain" class="w-5 h-5 mr-2"></i>
+                    智能学习
+                </h3>
+                <p class="text-sm opacity-90">
+                    AI记忆用户偏好，逐步提供更个性化的写作建议和优化方案。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 技术实现要点 -->
+    <div class="max-w-7xl mx-auto mt-8 bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+            <i data-lucide="code" class="w-6 h-6 mr-3 text-blue-600"></i>
+            技术实现要点
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">前端交互技术</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        Touch事件处理（touchstart, touchend, touchmove）
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        Selection API实现文本选择检测
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        CSS Transform和Transition动画
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        Intersection Observer监听元素可见性
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        Web Speech API语音识别
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">AI集成技术</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        实时流式AI响应处理
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        上下文信息自动提取和组织
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        提示词模板引擎
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        AI操作队列管理
+                    </li>
+                    <li class="flex items-center">
+                        <i data-lucide="check" class="w-4 h-4 mr-2 text-green-600"></i>
+                        智能缓存和离线支持
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+        
+        // 添加基本的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有按钮添加点击效果
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+
+            // 手势提示动画
+            const gestureIndicators = document.querySelectorAll('.gesture-indicator');
+            gestureIndicators.forEach(indicator => {
+                indicator.addEventListener('mouseenter', () => {
+                    indicator.style.transform = 'scale(1.1)';
+                });
+                indicator.addEventListener('mouseleave', () => {
+                    indicator.style.transform = 'scale(1)';
+                });
+            });
+
+            // 演示文本选择效果
+            const selectionHighlight = document.querySelector('.selection-highlight');
+            if (selectionHighlight) {
+                setInterval(() => {
+                    selectionHighlight.style.background = 'linear-gradient(120deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3))';
+                    setTimeout(() => {
+                        selectionHighlight.style.background = 'linear-gradient(120deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2))';
+                    }, 1000);
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html> 
